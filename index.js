@@ -1,13 +1,8 @@
 var ProgressBar = require('progress');
-var Fetcher = require("./lib/Fetcher");
-var FileSystemStorer = require("./lib/FileSystemStorer");
-var storer = new FileSystemStorer("boletin-oficial-2015.json");
-var fetcher = new Fetcher(storer, {
-  year: 2015
-});
+var SearchRequest = require("./lib/SearchRequest");
+var searchRequest = new SearchRequest();
 var bar;
-
-fetcher.fetch(pagination => {
+var progressCallback = pagination => {
   if (pagination.page === 1) {
     bar = new ProgressBar("  fetching [:bar] :percent", {
       complete: '=',
@@ -18,5 +13,14 @@ fetcher.fetch(pagination => {
   }
 
   bar.tick();
-}).then(result => debug("done"))
+};
+
+searchRequest
+  .outputFile("boletin-oficial-segunda-2015.json")
+  .section(2)
+  .fromDate(new Date("2015-01-01"))
+  .toDate(new Date("2016-01-01"))
+  .resultsPerPage(1000)
+  .fetch(progressCallback)
+  .then(result => debug("done"))
   .catch(err => debug("err %s", err));

@@ -12,14 +12,15 @@ var progressCallback = pagination => {
     });
   }
 
-  bar.tick();
+  bar.tick(pagination.jobs);
 };
 
 searchRequest
-  .outputFile("boletin-oficial-segunda-2015.json")
+  .outputFile("boletin-oficial-segunda-2015-" + Date.now() + ".json")
   .section(2)
   .fromDate(new Date("2015-01-01"))
   .toDate(new Date("2016-01-01"))
+  .jobs(4)
   .resultsPerPage(1000)
   .fetch(progressCallback)
   .then(result => debug("done"))
